@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nokia 3310 Retro Snake Game</title>
+  <meta name="description" content="Play the authentic retro Nokia 3310 Snake game online with pixel-perfect canvas rendering, synthesized 8-bit sound effects, customizable themes, and a local leaderboard.">
+  <!-- Google Fonts for Modern UI and Retro LCD text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1 class="logo-title">NOKIA 3310 <span>Retro Snake</span></h1>
+      <p class="logo-subtitle">Experience the classic brick phone gameplay in modern web fidelity</p>
+    </header>
+
+    <div class="main-layout">
+      <!-- Left Column: Instructions and Game Rules -->
+      <section class="info-panel" aria-label="Game Instructions">
+        <div class="glass-card">
+          <h2>How to Play</h2>
+          <div class="control-section">
+            <h3>Keyboard Controls</h3>
+            <ul class="keyboard-list">
+              <li><kbd>↑</kbd> or <kbd>W</kbd> : Move Up</li>
+              <li><kbd>↓</kbd> or <kbd>S</kbd> : Move Down</li>
+              <li><kbd>←</kbd> or <kbd>A</kbd> : Move Left</li>
+              <li><kbd>→</kbd> or <kbd>D</kbd> : Move Right</li>
+              <li><kbd>Space</kbd> or <kbd>P</kbd> : Pause / Resume</li>
+              <li><kbd>R</kbd> : Restart Game</li>
+            </ul>
+          </div>
+
+          <div class="control-section">
+            <h3>Retro Phone Keypad</h3>
+            <ul class="keypad-mapping-list">
+              <li><kbd>2</kbd> : Move Up</li>
+              <li><kbd>8</kbd> : Move Down</li>
+              <li><kbd>4</kbd> : Move Left</li>
+              <li><kbd>6</kbd> : Move Right</li>
+              <li><kbd>5</kbd> : Confirm / Action</li>
+            </ul>
+          </div>
+
+          <div class="game-modes-info">
+            <h3>Game Modes</h3>
+            <ul>
+              <li><strong>Classic:</strong> Hit a wall or yourself and it's Game Over.</li>
+              <li><strong>Warp:</strong> Wrap around screen edges. Avoid your tail.</li>
+              <li><strong>Obstacles:</strong> Grid contains brick walls you must navigate around.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Center Column: The Interactive Nokia Phone Simulator -->
+      <section class="phone-simulator-container" aria-label="Nokia Phone Simulator">
+        <!-- Interactive Nokia 3310 Frame -->
+        <div class="nokia-phone" id="nokia-3310-shell">
+          <!-- Nokia Logo on top bezel -->
+          <div class="nokia-bezel-top">
+            <div class="speaker-grill"></div>
+            <div class="nokia-brand">NOKIA</div>
+          </div>
+
+          <!-- LCD Screen Outer Frame -->
+          <div class="nokia-screen-bezel">
+            <!-- Screen glass with glow/backlight -->
+            <div class="nokia-screen-glass theme-green" id="screen-glass">
+              <!-- Internal LCD Panel -->
+              <div class="nokia-lcd">
+                <!-- Top Status Bar -->
+                <div class="lcd-status-bar">
+                  <div class="signal-indicator" id="signal-strength" title="Signal Strength">
+                    <div class="sig-bar bar-1"></div>
+                    <div class="sig-bar bar-2"></div>
+                    <div class="sig-bar bar-3"></div>
+                    <div class="sig-bar bar-4"></div>
+                    <div class="sig-bar bar-5"></div>
+                  </div>
+                  <div class="status-center">
+                    <span id="lcd-mode-indicator">CLASSIC</span>
+                    <span id="sound-indicator" class="sound-on-icon">🔊</span>
+                  </div>
+                  <div class="battery-indicator" id="battery-level" title="Battery Status">
+                    <div class="bat-level"></div>
+                    <div class="bat-cap"></div>
+                  </div>
+                </div>
+
+                <!-- Main Grid Canvas Area -->
+                <div class="canvas-wrapper">
+                  <canvas id="game-canvas" width="320" height="240"></canvas>
+                  
+                  <!-- Retro Screen Overlay for Scanlines -->
+                  <div class="screen-scanlines"></div>
+                </div>
+
+                <!-- Bottom Bar / Score Display -->
+                <div class="lcd-bottom-bar">
+                  <div class="current-score-display">Score: <span id="score-val">0000</span></div>
+                  <div class="high-score-display">HI: <span id="high-score-val">0000</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nokia Soft Keys / Menu Controls -->
+          <div class="nokia-menu-keys">
+            <button class="nokia-btn btn-nav-left" id="btn-soft-left" aria-label="Left soft key (Select/Menu)">
+              <span class="btn-groove"></span>
+            </button>
+            <button class="nokia-btn btn-nav-scroll" id="btn-soft-scroll" aria-label="Center Scroll Key">
+              <span class="btn-groove"></span>
+            </button>
+            <button class="nokia-btn btn-nav-right" id="btn-soft-right" aria-label="Right soft key (Back/Exit)">
+              <span class="btn-groove"></span>
+            </button>
+          </div>
+
+          <!-- Nokia Numeric Keypad (Tactile buttons) -->
+          <div class="nokia-keypad">
+            <button class="nokia-btn btn-num" id="btn-key-1" data-val="1"><span class="btn-label">1 <small>o_o</small></span></button>
+            <button class="nokia-btn btn-num btn-dir-up" id="btn-key-2" data-val="2"><span class="btn-label">2 <small>abc</small> ▲</span></button>
+            <button class="nokia-btn btn-num" id="btn-key-3" data-val="3"><span class="btn-label">3 <small>def</small></span></button>
+            <button class="nokia-btn btn-num btn-dir-left" id="btn-key-4" data-val="4"><span class="btn-label">4 <small>ghi</small> ◄</span></button>
+            <button class="nokia-btn btn-num btn-confirm" id="btn-key-5" data-val="5"><span class="btn-label">5 <small>jkl</small> OK</span></button>
+            <button class="nokia-btn btn-num btn-dir-right" id="btn-key-6" data-val="6"><span class="btn-label">6 <small>mno</small> ►</span></button>
+            <button class="nokia-btn btn-num" id="btn-key-7" data-val="7"><span class="btn-label">7 <small>pqrs</small></span></button>
+            <button class="nokia-btn btn-num btn-dir-down" id="btn-key-8" data-val="8"><span class="btn-label">8 <small>tuv</small> ▼</span></button>
+            <button class="nokia-btn btn-num" id="btn-key-9" data-val="9"><span class="btn-label">9 <small>wxyz</small></span></button>
+            <button class="nokia-btn btn-num" id="btn-key-star" data-val="*"><span class="btn-label">* <small>+</small></span></button>
+            <button class="nokia-btn btn-num" id="btn-key-0" data-val="0"><span class="btn-label">0 <small>_</small></span></button>
+            <button class="nokia-btn btn-num" id="btn-key-hash" data-val="#"><span class="btn-label"># <small>⇪</small></span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Settings & Dashboard -->
+      <section class="dashboard-panel" aria-label="Game Settings and Statistics">
+        <!-- Settings Panel -->
+        <div class="glass-card settings-card">
+          <h2>Game Options</h2>
+          
+          <div class="setting-group">
+            <label class="setting-label">Game Mode</label>
+            <div class="button-toggle-group">
+              <button class="toggle-btn active" id="mode-classic" data-mode="classic">Classic</button>
+              <button class="toggle-btn" id="mode-warp" data-mode="warp">Warp</button>
+              <button class="toggle-btn" id="mode-obstacles" data-mode="obstacles">Obstacles</button>
+            </div>
+          </div>
+
+          <div class="setting-group">
+            <label class="setting-label">Game Speed</label>
+            <div class="button-toggle-group">
+              <button class="toggle-btn" id="speed-slow" data-speed="150">Slow</button>
+              <button class="toggle-btn active" id="speed-normal" data-speed="100">Normal</button>
+              <button class="toggle-btn" id="speed-fast" data-speed="70">Fast</button>
+              <button class="toggle-btn" id="speed-hyper" data-speed="45">Insane</button>
+            </div>
+          </div>
+
+          <div class="setting-group">
+            <label class="setting-label">LCD Theme Light</label>
+            <div class="theme-picker-group">
+              <button class="theme-btn theme-green-select active" id="theme-green" data-theme="green" title="Classic Nokia Green"></button>
+              <button class="theme-btn theme-amber-select" id="theme-amber" data-theme="amber" title="Vintage Amber"></button>
+              <button class="theme-btn theme-cyan-select" id="theme-cyan" data-theme="cyan" title="Sleek Cyan"></button>
+              <button class="theme-btn theme-mono-select" id="theme-mono" data-theme="mono" title="High Contrast Mono"></button>
+            </div>
+          </div>
+
+          <div class="setting-group inline-setting">
+            <label for="sound-toggle" class="setting-label">Synthesized Audio</label>
+            <button class="sound-toggle-btn active" id="sound-toggle" aria-pressed="true">
+              Sound Enabled
+            </button>
+          </div>
+        </div>
+
+        <!-- Statistics Panel -->
+        <div class="glass-card stats-card">
+          <h2>My Stats</h2>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-val" id="stats-games-played">0</div>
+              <div class="stat-lbl">Games Played</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="stats-high-score">0</div>
+              <div class="stat-lbl">High Score</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="stats-foods-eaten">0</div>
+              <div class="stat-lbl">Foods Eaten</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="stats-avg-score">0</div>
+              <div class="stat-lbl">Avg Score</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leaderboard Panel -->
+        <div class="glass-card leaderboard-card">
+          <div class="leaderboard-header">
+            <h2>Leaderboard</h2>
+            <button class="reset-scores-btn" id="btn-reset-leaderboard" title="Reset leaderboard statistics">Reset</button>
+          </div>
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Name</th>
+                <th scope="col">Score</th>
+                <th scope="col">Mode</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+              <!-- Dynamically populated via JS -->
+              <tr><td colspan="4" class="no-records">No high scores yet!</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <footer class="app-footer">
+      <p>Built with HTML Canvas, Vanilla CSS & Vanilla Javascript. Synthesizing monophonic sounds with the Web Audio API.</p>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
